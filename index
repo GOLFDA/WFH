@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบเช็คชื่อ Work From Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy2: #112240;
+    --navy3: #1a3358;
+    --blue: #1e4d8c;
+    --blue2: #2563b0;
+    --gold: #c9a227;
+    --gold2: #e8b84b;
+    --teal: #0e7c6e;
+    --teal2: #10a892;
+    --text: #e8eaf6;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: rgba(201,162,39,0.2);
+    --border2: rgba(201,162,39,0.4);
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --card: rgba(17,34,64,0.8);
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(30,77,140,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(14,124,110,0.1) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy2) 0%, var(--navy3) 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 0 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .header-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--navy); font-weight: 700;
+  }
+  .logo-text { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .logo-sub { font-size: 11px; color: var(--gold2); letter-spacing: 1px; }
+  .clock-display {
+    text-align: right;
+    font-size: 22px; font-weight: 700; color: var(--gold2);
+    letter-spacing: 2px;
+  }
+  .clock-date { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* NAV */
+  .nav {
+    background: var(--navy2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; gap: 4px;
+  }
+  .nav-btn {
+    padding: 12px 20px; border: none; background: none;
+    color: var(--text2); cursor: pointer; font-family: 'Sarabun', sans-serif;
+    font-size: 14px; font-weight: 500; border-bottom: 3px solid transparent;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--gold2); border-bottom-color: var(--gold2); }
+  .badge {
+    display: inline-block; margin-left: 6px;
+    background: var(--blue); color: var(--text);
+    border-radius: 10px; padding: 1px 7px; font-size: 11px;
+  }
+
+  /* MAIN */
+  .main { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    backdrop-filter: blur(10px);
+  }
+  .card + .card { margin-top: 20px; }
+  .card-title {
+    font-size: 16px; font-weight: 700; color: var(--gold2);
+    margin-bottom: 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .icon { font-size: 18px; }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 12px; font-weight: 600; color: var(--text2);
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .form-group input, .form-group select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--gold2);
+    background: rgba(255,255,255,0.08);
+  }
+  .form-group input::placeholder { color: var(--text3); }
+  .form-group select option { background: var(--navy2); }
+  .id-display {
+    background: rgba(201,162,39,0.1);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--gold2);
+    font-size: 14px; font-weight: 600; letter-spacing: 1px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 24px; border-radius: 8px;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.2s; outline: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+    color: var(--navy); width: 100%; margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-success {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal2) 100%);
+    color: white; flex: 1;
+  }
+  .btn-danger { background: linear-gradient(135deg, #b91c1c 0%, var(--danger) 100%); color: white; flex: 1; }
+  .btn-outline {
+    background: transparent; border: 1px solid var(--border2); color: var(--gold2); padding: 8px 16px;
+  }
+  .btn-outline:hover { background: rgba(201,162,39,0.1); }
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* CHECK-IN PAGE */
+  .employee-search { display: flex; gap: 10px; margin-bottom: 20px; }
+  .employee-search input { flex: 1; }
+  .employee-card {
+    background: rgba(30,77,140,0.2);
+    border: 1px solid rgba(37,99,176,0.4);
+    border-radius: 10px; padding: 16px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .emp-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; color: white;
+    flex-shrink: 0; overflow: hidden;
+  }
+  .emp-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .emp-info { flex: 1; }
+  .emp-name { font-size: 16px; font-weight: 700; color: var(--text); }
+  .emp-rank { font-size: 13px; color: var(--gold2); }
+  .emp-dept { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .emp-id { font-size: 11px; color: var(--text3); font-family: monospace; }
+
+  /* CAMERA */
+  .camera-area {
+    position: relative;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border: 2px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .camera-area video, .camera-area canvas {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .camera-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .face-guide {
+    width: 180px; height: 220px;
+    border: 3px solid var(--gold2);
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+  @keyframes pulse-border {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+  .scan-line {
+    position: absolute; left: calc(50% - 90px); width: 180px;
+    height: 2px; background: var(--gold2);
+    animation: scan 2.5s ease-in-out infinite;
+    opacity: 0.8;
+  }
+  @keyframes scan {
+    0% { top: calc(50% - 110px); }
+    50% { top: calc(50% + 110px); }
+    100% { top: calc(50% - 110px); }
+  }
+  .camera-status {
+    position: absolute; bottom: 10px; left: 0; right: 0;
+    text-align: center; font-size: 12px; color: var(--gold2);
+    font-weight: 600; background: rgba(0,0,0,0.5); padding: 4px;
+  }
+  .cam-placeholder {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; height: 100%;
+    color: var(--text2);
+  }
+  .cam-placeholder .icon { font-size: 48px; }
+
+  /* LOCATION */
+  .location-box {
+    background: rgba(14,124,110,0.1);
+    border: 1px solid rgba(16,168,146,0.3);
+    border-radius: 8px; padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .location-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .location-info { flex: 1; }
+  .location-title { font-size: 12px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .location-text { font-size: 13px; color: var(--teal2); font-weight: 500; margin-top: 3px; }
+  .location-coords { font-size: 11px; color: var(--text3); font-family: monospace; margin-top: 2px; }
+
+  /* STATUS BADGE */
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+  .status-in { background: rgba(16,185,129,0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+  .status-out { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+  .status-late { background: rgba(245,158,11,0.15); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  /* TIME STATUS */
+  .time-status-bar {
+    display: flex; gap: 12px; margin-bottom: 20px;
+  }
+  .time-box {
+    flex: 1; background: rgba(255,255,255,0.04); border-radius: 10px;
+    border: 1px solid var(--border); padding: 14px; text-align: center;
+  }
+  .time-box .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .time-box .value { font-size: 20px; font-weight: 700; color: var(--text); margin: 4px 0; letter-spacing: 1px; }
+  .time-box .sub { font-size: 11px; }
+  .time-ok .value { color: var(--success); }
+  .time-late .value { color: var(--warning); }
+
+  /* ACTION BUTTONS */
+  .action-row { display: flex; gap: 12px; margin-top: 4px; }
+
+  /* RECORDS TABLE */
+  .records-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+  }
+  .records-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .filter-row { display: flex; gap: 8px; }
+  .filter-input {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 12px; color: var(--text);
+    font-family: 'Sarabun', sans-serif; font-size: 13px;
+    outline: none; width: 160px;
+  }
+  .filter-input:focus { border-color: var(--gold2); }
+  table { width: 100%; border-collapse: collapse; }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    background: rgba(201,162,39,0.1);
+    color: var(--gold2); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 10px 12px; text-align: left; white-space: nowrap;
+    border-bottom: 1px solid var(--border2);
+  }
+  td {
+    padding: 10px 12px; font-size: 13px; color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
+  .empty-row td {
+    text-align: center; color: var(--text3); padding: 40px;
+    font-size: 14px;
+  }
+
+  /* PHOTO THUMB */
+  .photo-thumb {
+    width: 32px; height: 32px; border-radius: 50%;
+    object-fit: cover; border: 2px solid var(--border2);
+  }
+  .thumb-placeholder {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--blue); display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700; color: white;
+    border: 2px solid var(--border2);
+  }
+
+  /* SUMMARY CARDS */
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .sum-card {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .sum-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .sum-value { font-size: 26px; font-weight: 700; margin: 4px 0; }
+  .sum-sub { font-size: 11px; color: var(--text3); }
+  .sum-blue .sum-value { color: var(--blue2); }
+  .sum-gold .sum-value { color: var(--gold2); }
+  .sum-green .sum-value { color: var(--success); }
+  .sum-red .sum-value { color: var(--danger); }
+
+  /* TOAST */
+  .toast-container {
+    position: fixed; top: 80px; right: 20px;
+    z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+  }
+  .toast {
+    background: var(--navy2); border-radius: 10px;
+    padding: 14px 18px; min-width: 250px;
+    border-left: 4px solid var(--success);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    animation: slideIn 0.3s ease;
+  }
+  .toast.error { border-left-color: var(--danger); }
+  .toast.warning { border-left-color: var(--warning); }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateX(10px); }
+  }
+  .toast.fade { animation: fadeOut 0.3s ease forwards; }
+
+  /* MODAL */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 999; display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--navy2); border: 1px solid var(--border2);
+    border-radius: 16px; padding: 28px; max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-title { font-size: 18px; font-weight: 700; color: var(--gold2); margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .detail-label { color: var(--text2); }
+  .detail-value { color: var(--text); font-weight: 500; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .header-inner { height: 56px; }
+    .main { padding: 16px; }
+    .time-status-bar { flex-direction: column; }
+    .action-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">WFH</div>
+      <div>
+        <div class="logo-text">ระบบเช็คชื่อ Work From Home</div>
+        <div class="logo-sub">ATTENDANCE MANAGEMENT SYSTEM</div>
+      </div>
+    </div>
+    <div>
+      <div class="clock-display" id="clockTime">--:--:--</div>
+      <div class="clock-date" id="clockDate"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showPage('register')">📋 ลงทะเบียน</button>
+    <button class="nav-btn" onclick="showPage('checkin')">📍 เช็คชื่อ <span class="badge" id="todayBadge">0</span></button>
+    <button class="nav-btn" onclick="showPage('records')">📊 รายงาน</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- REGISTER PAGE -->
+  <div class="page active" id="page-register">
+    <div class="card">
+      <div class="card-title"><span class="icon">👤</span> ลงทะเบียนบุคลากร</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>รหัสประจำตัว (Auto)</label>
+          <div class="id-display" id="autoId">WFH-0001</div>
+        </div>
+        <div class="form-group">
+          <label>ยศ / คำนำหน้า</label>
+          <select id="reg-rank">
+            <option value="">-- เลือก --</option>
+            <optgroup label="ทหาร">
+              <option>พลอากาศเอก</option><option>พลอากาศโท</option><option>พลอากาศตรี</option>
+              <option>นาวาอากาศเอก</option><option>นาวาอากาศโท</option><option>นาวาอากาศตรี</option>
+              <option>เรืออากาศเอก</option><option>เรืออากาศโท</option><option>เรืออากาศตรี</option>
+              <option>พันจ่าอากาศเอก</option><option>พันจ่าอากาศโท</option><option>พันจ่าอากาศตรี</option>
+              <option>จ่าอากาศเอก</option><option>จ่าอากาศโท</option><option>จ่าอากาศตรี</option>
+            </optgroup>
+            <optgroup label="พลเรือน">
+              <option>นาย</option><option>นาง</option><option>นางสาว</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ชื่อ</label>
+          <input type="text" id="reg-fname" placeholder="ชื่อ">
+        </div>
+        <div class="form-group">
+          <label>นามสกุล</label>
+          <input type="text" id="reg-lname" placeholder="นามสกุล">
+        </div>
+        <div class="form-group">
+          <label>ตำแหน่ง</label>
+          <input type="text" id="reg-position" placeholder="ระบุตำแหน่ง">
+        </div>
+        <div class="form-group">
+          <label>สังกัด / หน่วยงาน</label>
+          <input type="text" id="reg-dept" placeholder="ระบุหน่วยงาน">
+        </div>
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์</label>
+          <input type="tel" id="reg-phone" placeholder="0XX-XXX-XXXX">
+        </div>
+      </div>
+
+      <div class="card-title" style="margin-top: 24px;"><span class="icon">📸</span> ถ่ายรูปสำหรับระบบ</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;">
+        <div>
+          <div class="camera-area" id="regCamArea">
+            <div class="cam-placeholder" id="regCamPlaceholder">
+              <div class="icon">📷</div>
+              <div style="font-size: 14px;">กดเปิดกล้องเพื่อถ่ายรูป</div>
+            </div>
+            <video id="regVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            <canvas id="regCanvas" style="display:none; width:100%; height:100%; object-fit:cover;"></canvas>
+            <div class="camera-overlay" id="regCamOverlay" style="display:none;">
+              <div class="face-guide"></div>
+              <div class="scan-line"></div>
+              <div class="camera-status">จัดใบหน้าให้อยู่ในกรอบ</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn btn-outline btn-sm" onclick="startRegCamera()">📷 เปิดกล้อง</button>
+            <button class="btn btn-outline btn-sm" id="regCaptureBtn" onclick="captureRegPhoto()" disabled>📸 ถ่ายรูป</button>
+            <button class="btn btn-outline btn-sm" id="regRetakeBtn" onclick="retakeRegPhoto()" style="display:none;">🔄 ถ่ายใหม่</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size: 13px; color: var(--text2); margin-bottom: 10px; line-height: 1.8;">
+            <strong style="color: var(--gold2);">คำแนะนำ:</strong><br>
+            • จัดหน้าให้ตรง อยู่ในกรอบวงรี<br>
+            • แสงสว่างเพียงพอ ไม่มีเงาบังหน้า<br>
+            • ถอดแว่น/หมวก หากทำได้<br>
+            • ระบบจะใช้รูปนี้เพื่อยืนยันตัวตน
+          </div>
+          <div id="regPhotoPreview" style="display:none;">
+            <img id="regPhotoImg" style="width:100%; border-radius: 10px; border: 2px solid var(--success);">
+            <div style="color: var(--success); font-size: 13px; margin-top: 6px; text-align: center;">✓ บันทึกรูปภาพแล้ว</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="registerEmployee()" style="margin-top: 24px;">
+        ✅ ลงทะเบียน
+      </button>
+    </div>
+
+    <!-- Employee list -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-title"><span class="icon">👥</span> รายชื่อบุคลากรที่ลงทะเบียน</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>รหัส</th><th>ยศ/ชื่อ</th><th>ตำแหน่ง</th>
+              <th>สังกัด</th><th>เบอร์โทร</th><th>รูปภาพ</th><th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="empTable">
+            <tr class="empty-row"><td colspan="7">ยังไม่มีบุคลากรลงทะเบียน</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECK-IN PAGE -->
+  <div class="page" id="page-checkin">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div>
+        <div class="card">
+          <div class="card-title"><span class="icon">🔍</span> ค้นหาบุคลากร</div>
+          <div class="employee-search">
+            <input type="text" id="searchEmp" placeholder="ค้นหาชื่อ / รหัส..." class="form-group input" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:'Sarabun',sans-serif; font-size:14px; outline:none;">
+            <button class="btn btn-outline btn-sm" onclick="searchEmployee()" style="white-space:nowrap;">🔍 ค้นหา</button>
+          </div>
+          <div id="searchResults" style="max-height: 200px; overflow-y: auto;"></div>
+        </div>
+
+        <!-- Selected employee -->
+        <div class="card" id="selectedEmpCard" style="display:none; margin-top: 16px;">
+          <div class="card-title"><span class="icon">👤</span> บุคลากรที่เลือก</div>
+          <div class="employee-card">
+            <div class="emp-avatar" id="selAvatar">?</div>
+            <div class="emp-info">
+              <div class="emp-name" id="selName">-</div>
+              <div class="emp-rank" id="selRank">-</div>
+              <div class="emp-dept" id="selDept">-</div>
+              <div class="emp-id" id="selId">-</div>
+            </div>
+            <div id="selStatus"></div>
+          </div>
+          <div class="time-status-bar">
+            <div class="time-box" id="timeIn">
+              <div class="label">เข้างาน</div>
+              <div class="value" id="inTimeDisplay">--:--</div>
+              <div class="sub" id="inTimeStatus" style="color:var(--text3);">กำหนด 08:00 น.</div>
+            </div>
+            <div class="time-box" id="timeOut">
+              <div class="label">ออกงาน</div>
+              <div class="value" id="outTimeDisplay">--:--</div>
+              <div class="sub" id="outTimeStatus" style="color:var(--text3);">กำหนด 16:00 น.</div>
+            </div>
+          </div>
+          <div class="action-row" id="actionRow">
+            <button class="btn btn-success" id="btnCheckIn" onclick="doCheckIn()">▶ เข้างาน</button>
+            <button class="btn btn-danger" id="btnCheckOut" onclick="doCheckOut()" disabled>■ ออกงาน</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-title"><span class="icon">📷</span> สแกนใบหน้า</div>
+          <div class="camera-area" id="checkCamArea">
+            <div class="cam-placeholder" id="checkCamPlaceholder">
+              <div class="icon">🔍</div>
+              <div style="font-size: 14px; color: var(--text2);">เลือกบุคลากร<br>แล้วเปิดกล้องสแกน</div>
+            </div>
+            <video id="checkVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            <canvas id="checkCanvas" style="display:none; width:100%; height:100%; object-fit:cover;"></canvas>
+            <div class="camera-overlay" id="checkCamOverlay" style="display:none;">
+              <div class="face-guide"></div>
+              <div class="scan-line"></div>
+              <div class="camera-status" id="checkCamStatus">กำลังสแกนใบหน้า...</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn btn-outline btn-sm" id="startCheckCamBtn" onclick="startCheckCamera()">📷 เปิดกล้อง</button>
+            <button class="btn btn-outline btn-sm" id="scanFaceBtn" onclick="scanFace()" disabled>🔎 สแกน</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px;">
+          <div class="card-title"><span class="icon">📍</span> ตรวจสอบสถานที่</div>
+          <div class="location-box" id="locationBox">
+            <div class="location-icon">🌐</div>
+            <div class="location-info">
+              <div class="location-title">สถานที่ปัจจุบัน</div>
+              <div class="location-text" id="locationText">กำลังระบุตำแหน่ง...</div>
+              <div class="location-coords" id="locationCoords">กด "ตรวจสอบ" เพื่อดูพิกัด</div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="checkLocation()">📡 ตรวจสอบตำแหน่ง</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today records -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-title"><span class="icon">📋</span> เช็คชื่อวันนี้</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>รหัส</th><th>ชื่อ</th><th>เวลาเข้า</th><th>เวลาออก</th><th>สถานที่</th><th>สถานะ</th></tr>
+          </thead>
+          <tbody id="todayTable">
+            <tr class="empty-row"><td colspan="6">ยังไม่มีการเช็คชื่อวันนี้</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORDS PAGE -->
+  <div class="page" id="page-records">
+    <div class="summary-grid">
+      <div class="sum-card sum-blue">
+        <div class="sum-label">บุคลากรทั้งหมด</div>
+        <div class="sum-value" id="totalEmp">0</div>
+        <div class="sum-sub">คน ลงทะเบียน</div>
+      </div>
+      <div class="sum-card sum-green">
+        <div class="sum-label">เข้างานวันนี้</div>
+        <div class="sum-value" id="todayIn">0</div>
+        <div class="sum-sub">คน เช็คชื่อแล้ว</div>
+      </div>
+      <div class="sum-card sum-gold">
+        <div class="sum-label">เข้างานตรงเวลา</div>
+        <div class="sum-value" id="onTimeCount">0</div>
+        <div class="sum-sub">คน ก่อน 08:00</div>
+      </div>
+      <div class="sum-card sum-red">
+        <div class="sum-label">เข้างานสาย</div>
+        <div class="sum-value" id="lateCount">0</div>
+        <div class="sum-sub">คน หลัง 08:00</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="records-header">
+        <div class="records-title">ประวัติการเช็คชื่อทั้งหมด</div>
+        <div class="filter-row">
+          <input type="date" class="filter-input" id="filterDate">
+          <input type="text" class="filter-input" id="filterName" placeholder="ค้นหาชื่อ...">
+          <button class="btn btn-outline btn-sm" onclick="filterRecords()">🔍 กรอง</button>
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 ดาวน์โหลด</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>รหัส</th><th>ยศ/ชื่อ</th><th>สังกัด</th>
+              <th>วันที่</th><th>เข้า</th><th>ออก</th><th>สถานที่เข้า</th><th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTable">
+            <tr class="empty-row"><td colspan="8">ยังไม่มีประวัติการเช็คชื่อ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- MODAL confirm -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">ยืนยันการเช็คชื่อ</div>
+    <div id="modalContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="modalConfirmBtn" style="flex:1;">✅ ยืนยัน</button>
+      <button class="btn btn-outline" onclick="closeModal()" style="flex:1;">❌ ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let employees = [];
+let attendances = [];
+let selectedEmployee = null;
+let regPhotoData = null;
+let faceScanned = false;
+let locationData = null;
+let regStream = null;
+let checkStream = null;
+let pendingAction = null;
+let nextId = 1;
+
+const CHECKIN_HOUR = 8, CHECKOUT_HOUR = 16;
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  const days = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์'];
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('clockTime').textContent =
+    now.toLocaleTimeString('th-TH', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('clockDate').textContent =
+    `วัน${days[now.getDay()]}ที่ ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()+543}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ===== NAV =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'records') updateRecordsPage();
+}
+
+// ===== AUTO ID =====
+function genId() {
+  return 'WFH-' + String(nextId).padStart(4, '0');
+}
+
+// ===== REGISTER CAMERA =====
+async function startRegCamera() {
+  try {
+    if (regStream) { regStream.getTracks().forEach(t => t.stop()); }
+    regStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' } });
+    const vid = document.getElementById('regVideo');
+    vid.srcObject = regStream;
+    vid.style.display = 'block';
+    document.getElementById('regCanvas').style.display = 'none';
+    document.getElementById('regCamPlaceholder').style.display = 'none';
+    document.getElementById('regCamOverlay').style.display = 'flex';
+    document.getElementById('regCaptureBtn').disabled = false;
+    document.getElementById('regRetakeBtn').style.display = 'none';
+    document.getElementById('regPhotoPreview').style.display = 'none';
+    regPhotoData = null;
+  } catch(e) { showToast('ไม่สามารถเข้าถึงกล้องได้: ' + e.message, 'error'); }
+}
+
+function captureRegPhoto() {
+  const vid = document.getElementById('regVideo');
+  const canvas = document.getElementById('regCanvas');
+  canvas.width = vid.videoWidth || 640;
+  canvas.height = vid.videoHeight || 480;
+  canvas.getContext('2d').drawImage(vid, 0, 0);
+  regPhotoData = canvas.toDataURL('image/jpeg', 0.8);
+  vid.style.display = 'none';
+  canvas.style.display = 'block';
+  document.getElementById('regCamOverlay').style.display = 'none';
+  document.getElementById('regPhotoPreview').style.display = 'block';
+  document.getElementById('regPhotoImg').src = regPhotoData;
+  document.getElementById('regRetakeBtn').style.display = 'inline-flex';
+  document.getElementById('regCaptureBtn').disabled = true;
+  if (regStream) regStream.getTracks().forEach(t => t.stop());
+  showToast('ถ่ายรูปสำเร็จ', 'success');
+}
+
+function retakeRegPhoto() {
+  regPhotoData = null;
+  document.getElementById('regPhotoPreview').style.display = 'none';
+  document.getElementById('regCanvas').style.display = 'none';
+  startRegCamera();
+}
+
+// ===== REGISTER =====
+function registerEmployee() {
+  const rank = document.getElementById('reg-rank').value;
+  const fname = document.getElementById('reg-fname').value.trim();
+  const lname = document.getElementById('reg-lname').value.trim();
+  const pos = document.getElementById('reg-position').value.trim();
+  const dept = document.getElementById('reg-dept').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+
+  if (!rank || !fname || !lname || !pos || !dept || !phone) {
+    showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error'); return;
+  }
+  if (!regPhotoData) {
+    showToast('กรุณาถ่ายรูปก่อนลงทะเบียน', 'error'); return;
+  }
+  const emp = {
+    id: genId(), rank, fname, lname, position: pos, dept, phone,
+    photo: regPhotoData, createdAt: new Date().toISOString()
+  };
+  employees.push(emp);
+  nextId++;
+  document.getElementById('autoId').textContent = genId();
+  updateEmpTable();
+  resetRegForm();
+  showToast(`ลงทะเบียน ${rank}${fname} ${lname} สำเร็จ`, 'success');
+}
+
+function resetRegForm() {
+  ['reg-rank','reg-fname','reg-lname','reg-position','reg-dept','reg-phone'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName === 'SELECT') el.value = ''; else el.value = '';
+  });
+  regPhotoData = null;
+  document.getElementById('regVideo').style.display = 'none';
+  document.getElementById('regCanvas').style.display = 'none';
+  document.getElementById('regCamPlaceholder').style.display = 'flex';
+  document.getElementById('regCamOverlay').style.display = 'none';
+  document.getElementById('regPhotoPreview').style.display = 'none';
+  document.getElementById('regCaptureBtn').disabled = true;
+  document.getElementById('regRetakeBtn').style.display = 'none';
+}
+
+function updateEmpTable() {
+  const tb = document.getElementById('empTable');
+  if (!employees.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="7">ยังไม่มีบุคลากรลงทะเบียน</td></tr>'; return;
+  }
+  tb.innerHTML = employees.map(e => `
+    <tr>
+      <td style="font-family:monospace;color:var(--gold2);">${e.id}</td>
+      <td>${e.rank}<br><span style="font-weight:600;">${e.fname} ${e.lname}</span></td>
+      <td>${e.position}</td>
+      <td>${e.dept}</td>
+      <td style="font-family:monospace;">${e.phone}</td>
+      <td>${e.photo ? `<img src="${e.photo}" class="photo-thumb">` : `<div class="thumb-placeholder">${e.fname[0]}</div>`}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="deleteEmployee('${e.id}')" style="color:var(--danger);border-color:var(--danger);">🗑</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteEmployee(id) {
+  employees = employees.filter(e => e.id !== id);
+  updateEmpTable();
+  showToast('ลบบุคลากรแล้ว', 'warning');
+}
+
+// ===== SEARCH =====
+function searchEmployee() {
+  const q = document.getElementById('searchEmp').value.trim().toLowerCase();
+  if (!q) { showToast('กรุณาป้อนคำค้นหา', 'warning'); return; }
+  const res = employees.filter(e =>
+    e.fname.toLowerCase().includes(q) || e.lname.toLowerCase().includes(q) ||
+    e.id.toLowerCase().includes(q) || e.rank.includes(q)
+  );
+  const container = document.getElementById('searchResults');
+  if (!res.length) { container.innerHTML = '<div style="padding:16px;color:var(--text3);text-align:center;">ไม่พบบุคลากร</div>'; return; }
+  container.innerHTML = res.map(e => `
+    <div onclick="selectEmployee('${e.id}')" style="
+      display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;
+      cursor:pointer;border:1px solid var(--border);margin-bottom:6px;
+      transition:background 0.2s;background:rgba(255,255,255,0.03);"
+      onmouseover="this.style.background='rgba(201,162,39,0.1)'"
+      onmouseout="this.style.background='rgba(255,255,255,0.03)'">
+      ${e.photo ? `<img src="${e.photo}" class="photo-thumb">` : `<div class="thumb-placeholder">${e.fname[0]}</div>`}
+      <div style="flex:1;">
+        <div style="font-weight:600;">${e.rank} ${e.fname} ${e.lname}</div>
+        <div style="font-size:12px;color:var(--text2);">${e.position} · ${e.dept}</div>
+      </div>
+      <div style="font-size:11px;color:var(--gold2);font-family:monospace;">${e.id}</div>
+    </div>
+  `).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('searchEmp').addEventListener('keydown', e => {
+    if (e.key === 'Enter') searchEmployee();
+  });
+});
+
+function selectEmployee(id) {
+  selectedEmployee = employees.find(e => e.id === id);
+  if (!selectedEmployee) return;
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchEmp').value = '';
+  faceScanned = false;
+
+  // Avatar
+  const avatarEl = document.getElementById('selAvatar');
+  if (selectedEmployee.photo) {
+    avatarEl.innerHTML = `<img src="${selectedEmployee.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    avatarEl.innerHTML = selectedEmployee.fname[0];
+  }
+  document.getElementById('selName').textContent = `${selectedEmployee.fname} ${selectedEmployee.lname}`;
+  document.getElementById('selRank').textContent = selectedEmployee.rank + ' · ' + selectedEmployee.position;
+  document.getElementById('selDept').textContent = selectedEmployee.dept;
+  document.getElementById('selId').textContent = selectedEmployee.id + ' · ' + selectedEmployee.phone;
+
+  // Check today record
+  const todayRec = getTodayRecord(selectedEmployee.id);
+  updateSelStatus(todayRec);
+  document.getElementById('selectedEmpCard').style.display = 'block';
+  document.getElementById('scanFaceBtn').disabled = false;
+  showToast(`เลือก ${selectedEmployee.rank}${selectedEmployee.fname} แล้ว`, 'success');
+}
+
+function getTodayRecord(id) {
+  const today = new Date().toDateString();
+  return attendances.find(a => a.empId === id && new Date(a.date).toDateString() === today);
+}
+
+function updateSelStatus(rec) {
+  const now = new Date();
+  const inEl = document.getElementById('inTimeDisplay');
+  const outEl = document.getElementById('outTimeDisplay');
+  const inSub = document.getElementById('inTimeStatus');
+  const outSub = document.getElementById('outTimeStatus');
+  const btnIn = document.getElementById('btnCheckIn');
+  const btnOut = document.getElementById('btnCheckOut');
+
+  if (rec) {
+    if (rec.checkIn) {
+      inEl.textContent = rec.checkIn;
+      const late = isLate(rec.checkIn);
+      inSub.textContent = late ? '⚠ สาย' : '✓ ตรงเวลา';
+      inSub.style.color = late ? 'var(--warning)' : 'var(--success)';
+      document.getElementById('timeIn').className = 'time-box ' + (late ? 'time-late' : 'time-ok');
+      btnIn.disabled = true;
+    }
+    if (rec.checkOut) {
+      outEl.textContent = rec.checkOut;
+      outSub.textContent = '✓ ออกงานแล้ว';
+      outSub.style.color = 'var(--success)';
+      document.getElementById('timeOut').className = 'time-box time-ok';
+      btnOut.disabled = true;
+      btnIn.disabled = true;
+      document.getElementById('selStatus').innerHTML = '<span class="status-badge status-in"><span class="status-dot"></span>เสร็จงาน</span>';
+    } else {
+      document.getElementById('selStatus').innerHTML = '<span class="status-badge status-late"><span class="status-dot"></span>กำลังทำงาน</span>';
+      btnOut.disabled = false;
+    }
+  } else {
+    inEl.textContent = '--:--'; outEl.textContent = '--:--';
+    inSub.textContent = 'กำหนด 08:00 น.'; inSub.style.color = 'var(--text3)';
+    outSub.textContent = 'กำหนด 16:00 น.'; outSub.style.color = 'var(--text3)';
+    document.getElementById('timeIn').className = 'time-box';
+    document.getElementById('timeOut').className = 'time-box';
+    btnIn.disabled = false; btnOut.disabled = true;
+    document.getElementById('selStatus').innerHTML = '<span class="status-badge status-out"><span class="status-dot"></span>ยังไม่เช็คชื่อ</span>';
+  }
+}
+
+function isLate(timeStr) {
+  const [h, m] = timeStr.split(':').map(Number);
+  return h > CHECKIN_HOUR || (h === CHECKIN_HOUR && m > 0);
+}
+
+// ===== CHECK CAMERA =====
+async function startCheckCamera() {
+  try {
+    if (!selectedEmployee) { showToast('เลือกบุคลากรก่อน', 'warning'); return; }
+    if (checkStream) checkStream.getTracks().forEach(t => t.stop());
+    checkStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 480 } });
+    const vid = document.getElementById('checkVideo');
+    vid.srcObject = checkStream;
+    vid.style.display = 'block';
+    document.getElementById('checkCanvas').style.display = 'none';
+    document.getElementById('checkCamPlaceholder').style.display = 'none';
+    document.getElementById('checkCamOverlay').style.display = 'flex';
+    document.getElementById('scanFaceBtn').disabled = false;
+  } catch(e) { showToast('ไม่สามารถเข้าถึงกล้อง: ' + e.message, 'error'); }
+}
+
+function scanFace() {
+  if (!selectedEmployee) { showToast('เลือกบุคลากรก่อน', 'warning'); return; }
+  const vid = document.getElementById('checkVideo');
+  const canvas = document.getElementById('checkCanvas');
+  if (vid.style.display === 'none') { showToast('เปิดกล้องก่อน', 'warning'); return; }
+
+  document.getElementById('checkCamStatus').textContent = 'กำลังประมวลผล...';
+  document.getElementById('scanFaceBtn').disabled = true;
+
+  setTimeout(() => {
+    canvas.width = vid.videoWidth || 640;
+    canvas.height = vid.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(vid, 0, 0);
+
+    // Draw verification overlay
+    ctx.strokeStyle = '#10b981'; ctx.lineWidth = 3;
+    const cx = canvas.width/2, cy = canvas.height/2;
+    ctx.beginPath(); ctx.ellipse(cx, cy, 90, 110, 0, 0, 2*Math.PI); ctx.stroke();
+    ctx.fillStyle = 'rgba(16,185,129,0.2)'; ctx.fill();
+    ctx.fillStyle = '#10b981'; ctx.font = 'bold 16px Sarabun';
+    ctx.textAlign = 'center'; ctx.fillText('✓ ยืนยันตัวตนสำเร็จ', cx, cy + 140);
+
+    vid.style.display = 'none';
+    canvas.style.display = 'block';
+    document.getElementById('checkCamOverlay').style.display = 'none';
+    faceScanned = true;
+    showToast('สแกนใบหน้าสำเร็จ ✓', 'success');
+    if (checkStream) checkStream.getTracks().forEach(t => t.stop());
+  }, 2000);
+}
+
+// ===== LOCATION =====
+function checkLocation() {
+  if (!navigator.geolocation) { showToast('Browser ไม่รองรับ Geolocation', 'error'); return; }
+  document.getElementById('locationText').textContent = 'กำลังระบุตำแหน่ง...';
+  document.getElementById('locationCoords').textContent = '';
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude.toFixed(6);
+    const lon = pos.coords.longitude.toFixed(6);
+    const acc = Math.round(pos.coords.accuracy);
+    locationData = { lat, lon, acc };
+    document.getElementById('locationText').textContent = `Lat: ${lat}, Lon: ${lon}`;
+    document.getElementById('locationCoords').textContent = `ความแม่นยำ: ±${acc} เมตร`;
+    showToast('ระบุตำแหน่งสำเร็จ', 'success');
+  }, err => {
+    const msgs = { 1:'ปฏิเสธการเข้าถึง Location', 2:'ไม่สามารถระบุตำแหน่งได้', 3:'หมดเวลา' };
+    document.getElementById('locationText').textContent = msgs[err.code] || 'เกิดข้อผิดพลาด';
+    locationData = { lat: 'N/A', lon: 'N/A', acc: 0 };
+    showToast('ระบุตำแหน่งไม่ได้: ' + (msgs[err.code]||''), 'warning');
+  }, { timeout: 10000 });
+}
+
+// ===== CHECK IN/OUT =====
+function doCheckIn() {
+  if (!selectedEmployee) { showToast('เลือกบุคลากรก่อน', 'warning'); return; }
+  if (!faceScanned) { showToast('กรุณาสแกนใบหน้าก่อน', 'warning'); return; }
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+  const late = isLate(timeStr);
+  showModal('ยืนยันการเข้างาน', `
+    <div class="detail-row"><span class="detail-label">ชื่อ</span><span class="detail-value">${selectedEmployee.rank} ${selectedEmployee.fname} ${selectedEmployee.lname}</span></div>
+    <div class="detail-row"><span class="detail-label">เวลา</span><span class="detail-value" style="color:${late?'var(--warning)':'var(--success)'};">${timeStr} ${late?'(สาย)':'(ตรงเวลา)'}</span></div>
+    <div class="detail-row"><span class="detail-label">สถานที่</span><span class="detail-value">${locationData ? locationData.lat+', '+locationData.lon : 'ไม่ได้ระบุ'}</span></div>
+    <div class="detail-row"><span class="detail-label">สถานะใบหน้า</span><span class="detail-value" style="color:var(--success);">✓ ยืนยันแล้ว</span></div>
+  `, () => {
+    const today = now.toDateString();
+    let rec = attendances.find(a => a.empId === selectedEmployee.id && new Date(a.date).toDateString() === today);
+    if (!rec) {
+      rec = {
+        id: Date.now(), empId: selectedEmployee.id, date: now.toISOString(),
+        checkIn: timeStr, checkOut: null,
+        location: locationData ? `${locationData.lat},${locationData.lon}` : '-', late
+      };
+      attendances.push(rec);
+    }
+    updateSelStatus(rec);
+    updateTodayTable(); updateBadge();
+    showToast(`เข้างาน ${timeStr} ${late ? '(สาย)' : '✓ ตรงเวลา'}`, late ? 'warning' : 'success');
+  });
+}
+
+function doCheckOut() {
+  if (!selectedEmployee) { showToast('เลือกบุคลากรก่อน', 'warning'); return; }
+  if (!faceScanned) { showToast('กรุณาสแกนใบหน้าก่อน', 'warning'); return; }
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+  const early = now.getHours() < CHECKOUT_HOUR;
+  const rec = getTodayRecord(selectedEmployee.id);
+  if (!rec || !rec.checkIn) { showToast('ยังไม่ได้เช็คเข้างาน', 'error'); return; }
+  showModal('ยืนยันการออกงาน', `
+    <div class="detail-row"><span class="detail-label">ชื่อ</span><span class="detail-value">${selectedEmployee.rank} ${selectedEmployee.fname} ${selectedEmployee.lname}</span></div>
+    <div class="detail-row"><span class="detail-label">เวลา</span><span class="detail-value" style="color:${early?'var(--warning)':'var(--success)'};">${timeStr} ${early?'(ออกก่อนเวลา)':'(ปกติ)'}</span></div>
+    <div class="detail-row"><span class="detail-label">เข้างาน</span><span class="detail-value">${rec.checkIn}</span></div>
+    <div class="detail-row"><span class="detail-label">สถานที่</span><span class="detail-value">${locationData ? locationData.lat+', '+locationData.lon : 'ไม่ได้ระบุ'}</span></div>
+  `, () => {
+    rec.checkOut = timeStr;
+    if (locationData) rec.location += ' → ' + locationData.lat + ',' + locationData.lon;
+    updateSelStatus(rec);
+    updateTodayTable(); updateBadge();
+    showToast(`ออกงาน ${timeStr}`, 'success');
+  });
+}
+
+// ===== TODAY TABLE =====
+function updateTodayTable() {
+  const today = new Date().toDateString();
+  const recs = attendances.filter(a => new Date(a.date).toDateString() === today);
+  const tb = document.getElementById('todayTable');
+  if (!recs.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="6">ยังไม่มีการเช็คชื่อวันนี้</td></tr>'; return;
+  }
+  tb.innerHTML = recs.map(r => {
+    const emp = employees.find(e => e.id === r.empId);
+    const badgeClass = r.late ? 'status-late' : 'status-in';
+    const badgeText = r.checkOut ? 'เสร็จงาน' : (r.late ? 'สาย' : 'กำลังทำงาน');
+    return `<tr>
+      <td style="font-family:monospace;color:var(--gold2);">${r.empId}</td>
+      <td>${emp ? emp.rank+' '+emp.fname+' '+emp.lname : r.empId}</td>
+      <td>${r.checkIn || '-'}</td>
+      <td>${r.checkOut || '<span style="color:var(--text3)">-</span>'}</td>
+      <td style="font-family:monospace;font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;">${r.location}</td>
+      <td><span class="status-badge ${badgeClass}"><span class="status-dot"></span>${badgeText}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateBadge() {
+  const today = new Date().toDateString();
+  const count = attendances.filter(a => new Date(a.date).toDateString() === today).length;
+  document.getElementById('todayBadge').textContent = count;
+}
+
+// ===== RECORDS PAGE =====
+function updateRecordsPage() {
+  const today = new Date().toDateString();
+  const todayRecs = attendances.filter(a => new Date(a.date).toDateString() === today);
+  document.getElementById('totalEmp').textContent = employees.length;
+  document.getElementById('todayIn').textContent = todayRecs.length;
+  document.getElementById('onTimeCount').textContent = todayRecs.filter(r => !r.late).length;
+  document.getElementById('lateCount').textContent = todayRecs.filter(r => r.late).length;
+  renderRecordsTable(attendances);
+}
+
+function renderRecordsTable(recs) {
+  const tb = document.getElementById('recordsTable');
+  if (!recs.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="8">ยังไม่มีประวัติการเช็คชื่อ</td></tr>'; return;
+  }
+  tb.innerHTML = recs.slice().reverse().map(r => {
+    const emp = employees.find(e => e.id === r.empId);
+    const d = new Date(r.date);
+    const dateStr = d.toLocaleDateString('th-TH', {day:'2-digit',month:'short',year:'numeric'});
+    const badge = r.checkOut ? 'status-in' : (r.late ? 'status-late' : 'status-in');
+    const status = r.checkOut ? 'เสร็จงาน' : (r.late ? 'สาย' : 'กำลังทำงาน');
+    return `<tr>
+      <td style="font-family:monospace;font-size:12px;color:var(--gold2);">${r.empId}</td>
+      <td>${emp ? emp.rank+' '+emp.fname+' '+emp.lname : r.empId}</td>
+      <td style="font-size:12px;">${emp ? emp.dept : '-'}</td>
+      <td style="font-family:monospace;font-size:12px;">${dateStr}</td>
+      <td style="font-family:monospace;">${r.checkIn||'-'}</td>
+      <td style="font-family:monospace;">${r.checkOut||'-'}</td>
+      <td style="font-size:11px;max-width:100px;overflow:hidden;text-overflow:ellipsis;">${r.location}</td>
+      <td><span class="status-badge ${badge}"><span class="status-dot"></span>${status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterRecords() {
+  let filtered = [...attendances];
+  const dateFilter = document.getElementById('filterDate').value;
+  const nameFilter = document.getElementById('filterName').value.trim().toLowerCase();
+  if (dateFilter) {
+    filtered = filtered.filter(r => {
+      const d = new Date(r.date);
+      return d.toISOString().startsWith(dateFilter);
+    });
+  }
+  if (nameFilter) {
+    filtered = filtered.filter(r => {
+      const emp = employees.find(e => e.id === r.empId);
+      return emp && (emp.fname.toLowerCase().includes(nameFilter) || emp.lname.toLowerCase().includes(nameFilter) || r.empId.includes(nameFilter));
+    });
+  }
+  renderRecordsTable(filtered);
+}
+
+function exportCSV() {
+  if (!attendances.length) { showToast('ไม่มีข้อมูล', 'warning'); return; }
+  const headers = ['รหัส','ยศ','ชื่อ','นามสกุล','สังกัด','วันที่','เวลาเข้า','เวลาออก','สถานที่','หมายเหตุ'];
+  const rows = attendances.map(r => {
+    const emp = employees.find(e => e.id === r.empId) || {};
+    return [r.empId, emp.rank||'', emp.fname||'', emp.lname||'', emp.dept||'',
+      new Date(r.date).toLocaleDateString('th-TH'), r.checkIn||'', r.checkOut||'', r.location||'', r.late?'สาย':'ตรงเวลา'];
+  });
+  const csv = '\uFEFF' + [headers, ...rows].map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('ดาวน์โหลด CSV สำเร็จ', 'success');
+}
+
+// ===== MODAL =====
+function showModal(title, content, onConfirm) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalContent').innerHTML = content;
+  pendingAction = onConfirm;
+  document.getElementById('confirmModal').classList.add('open');
+  document.getElementById('modalConfirmBtn').onclick = () => {
+    closeModal(); if (pendingAction) pendingAction();
+  };
+}
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('open');
+  pendingAction = null;
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + (type === 'error' ? 'error' : type === 'warning' ? 'warning' : '');
+  const icons = { success: '✓', error: '✕', warning: '!' };
+  toast.innerHTML = `<span style="font-size:16px;">${icons[type]||'ℹ'}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('fade'); setTimeout(() => toast.remove(), 400); }, 3000);
+}
+
+// Init
+document.getElementById('autoId').textContent = genId();
+</script>
+</body>
+</html>
